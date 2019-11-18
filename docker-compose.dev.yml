@@ -6,9 +6,8 @@ services:
   app:
     # build:
     #   context: .
-    #   dockerfile: Dockerfile
-    # image: dev_php-orcl-71
-    image: natansdj/php-orcl:71
+    #   dockerfile: Dockerfile.php72
+    image: natansdj/php-orcl:72
     container_name: d_dch
     links:
       - redis
