@@ -8,11 +8,13 @@ services:
     #   context: .
     #   dockerfile: Dockerfile.php72
     image: natansdj/php-orcl:72
+    # image: natansdj/php-orcl:71
+    # image: webdevops/php-apache-dev:7.1
     container_name: d_dch
     links:
       - redis
-    external_links:
-      - dev_oracle:oracle
+    # external_links:
+      # - dev_oracle:oracle
     networks:
       default:
         ipv4_address: 172.18.0.35
@@ -24,7 +26,10 @@ services:
       - storage:/storage
       - ../_htdocs/net_dch/:/app/
       - ./:/docker/
+      - ./backup/eadmin_data:/eadmin_data
+      - ./backup/data1:/data1
       - ./etc/php/development.ini:/opt/docker/etc/php/php.ini
+      # - ./etc/httpd/conf.d/10-server.conf:/opt/docker/etc/httpd/conf.d/10-server.conf
     # cap and privileged needed for slowlog
     cap_add:
       - SYS_PTRACE
@@ -36,12 +41,26 @@ services:
     environment:
       VIRTUAL_HOST: "dch.vm"
       VIRTUAL_PORT: "80"
+      WEB_DOCUMENT_ROOT: "/app/public"
       # LETSENCRYPT_HOST: "dch.vm"
       # LETSENCRYPT_EMAIL: "dch@example.com"
       # VIRTUAL_PORT: "443"
       # PHP_XDEBUG_ENABLED: 1
       # PHP_IDE_CONFIG: serverName=workspace.vm
       # XDEBUG_CONFIG: remote_host=172.18.0.1 remote_connect_back=1
+
+  # html:
+  #   image: jojomi/lighttpd-static:latest
+  #   container_name: d_dch_html
+  #   volumes:
+  #     - ../_htdocs/net_dch_html_lms:/var/www:ro
+  #   mem_limit: 100m
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.18.0.37
+  #   environment:
+  #     VIRTUAL_HOST: "html.dch.vm"
+  #     VIRTUAL_PORT: "80"
 
   #######################################
   # Redis
@@ -51,10 +70,10 @@ services:
     container_name: d_dch_redis
     networks:
       default:
-        ipv4_address: 172.18.0.36
+        ipv4_address: 172.18.0.38
     volumes:
       - redis:/data
-    mem_limit: 500m
+    mem_limit: 300m
     env_file:
       - etc/environment.yml
       - etc/environment.development.yml
@@ -70,7 +89,7 @@ volumes:
     driver: local
     driver_opts:
       type: bind
-      device: /home/a407/Documents/dc_dch/backup
+      device: /home/nath/Documents/dc_dch/backup
       o: bind
   redis:
     driver: local
